@@ -1490,8 +1490,32 @@ u8 halbtcoutsrc_SetBtAntDetection(void *pBtcContext, u8 txTime, u8 btChnl)
 
 u32 halbtcoutsrc_GetBtReg(void *pBtcContext, u8 RegType, u32 RegAddr)
 {
-	/* To be implemented. Always return 0 temporarily */
-	return 0;
+	PBTC_COEXIST pBtCoexist;
+	u32 data = 0;
+
+
+	pBtCoexist = (PBTC_COEXIST)pBtcContext;
+
+	if (halbtcoutsrc_IsHwMailboxExist(pBtCoexist) == _TRUE) {
+		u8 buf[3] = {0};
+		_irqL irqL;
+		u8 ret;
+
+		buf[0] = RegType;
+		*(u16 *)(buf+1) = cpu_to_le16((u16)RegAddr);
+
+		_enter_critical_mutex(&GLBtcBtMpOperLock, &irqL);
+
+		ret = _btmpoper_cmd(pBtCoexist, BT_OP_READ_REG, 0, buf, 3);
+		if (_FAIL == ret)
+			goto out;
+		data = le16_to_cpu(*(u16 *)GLBtcBtMpRptRsp);
+out:
+		_exit_critical_mutex(&GLBtcBtMpOperLock, &irqL);
+
+	}
+
+	return data;
 }
 
 void halbtcoutsrc_FillH2cCmd(void *pBtcContext, u8 elementId, u32 cmdLen, u8 *pCmdBuffer)
