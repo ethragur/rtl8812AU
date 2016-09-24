@@ -604,13 +604,14 @@ MPT_InitializeAdapter(
 	rtw_write32(pAdapter, REG_MACID_NO_LINK_0, 0x0);
 	rtw_write32(pAdapter, REG_MACID_NO_LINK_1, 0x0);
 #endif
+#ifdef CONFIG_RTL8814A
 	if (IS_HARDWARE_TYPE_8814A(pAdapter)) {
 		pHalData->BackUp_IG_REG_4_Chnl_Section[0] = (u1Byte)PHY_QueryBBReg(pAdapter, rA_IGI_Jaguar, bMaskByte0);
 		pHalData->BackUp_IG_REG_4_Chnl_Section[1] = (u1Byte)PHY_QueryBBReg(pAdapter, rB_IGI_Jaguar, bMaskByte0);
 		pHalData->BackUp_IG_REG_4_Chnl_Section[2] = (u1Byte)PHY_QueryBBReg(pAdapter, rC_IGI_Jaguar2, bMaskByte0);
 		pHalData->BackUp_IG_REG_4_Chnl_Section[3] = (u1Byte)PHY_QueryBBReg(pAdapter, rD_IGI_Jaguar2, bMaskByte0);
 	}
-
+#endif
 	return	rtStatus;
 }
 
